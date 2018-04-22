@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<!--
+	Emily Meuer
+	04/15/2018
+
+	Customizable message template provider, using AngularJS
+-->
+
+<html ng-app="app">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link rel="stylesheet" href="style.css"/>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+        <script src="app.js"></script>
+    </head>
+
+    <body>
+        <h1>Hi, {{ 1 + 18 }}!</h1>
+
+		<div ng-controller="MessageController">
+			<p>replace {{ me }}</p>
+			<p id="message">
+				{{ message }}
+	  		</p>
+		</div>
+
+        <!-- Tables that will read from the template JSON and autofill themselves -->
+    </body>
+</html>
