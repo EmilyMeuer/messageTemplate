@@ -161,6 +161,14 @@
 
         console.log("$scope.firstName = " + $scope.firstName);
 
+        var messages    = $http.get("https://emilymeuer.github.io/messageTemplate/Messages.json").
+            then( (data) => {
+                console.log("Success getting Messages");
+                console.log(data);
+            }, (error) => {
+                console.log("Error getting Messages");
+                console.log(error);
+            });
         var message    = messages[0].message;
         console.log("message.firstName = " + message.firstName);
         $scope.message  = message;
