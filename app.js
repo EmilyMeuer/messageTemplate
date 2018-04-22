@@ -161,17 +161,28 @@
 
         console.log("$scope.firstName = " + $scope.firstName);
 
-        var messages    = $http.get("https://emilymeuer.github.io/messageTemplate/Messages.json").
-            then( (data) => {
+//        var messages    = $http.jsonp("https://emilymeuer.github.io/messageTemplate/Messages.json").
+        var messages    = $http.get("./Messages.json").
+            then( (response) => {
                 console.log("Success getting Messages");
-                console.log(data);
+                console.log(response.data[0]);
+                var messageElement = document.querySelector("#message").innerHTML  = "<p ng-bind=\"greeting\" ng-controller=\"InnerController\">" + response.data[0].message + "</p>";
+            //    messageElement.greeting = "Hi";
+            /*    $scope.controller = ("trueInnerController", ($scope) => {
+                    $scope.greeting = "Hello";
+                });
+                */
+                $scope.greeting = "Hello";
+                console.log($scope);
+//                $scope.apply();
+//                $scope.message  = innerController;
             }, (error) => {
                 console.log("Error getting Messages");
                 console.log(error);
             });
-        var message    = messages[0].message;
-        console.log("message.firstName = " + message.firstName);
-        $scope.message  = message;
+//        var message    = messages[0].message;
+//        console.log("message.firstName = " + message.firstName);
+
 
         // New plan:
         // There's some sort of replace;
@@ -180,5 +191,10 @@
 
         // I'll use the replace from cal
 
-    });
+    }); // MessageController
+
+
+        var innerController = app.controller("InnerController", function($scope) {
+            $scope.greeting = "Hello";
+        });
 })();
