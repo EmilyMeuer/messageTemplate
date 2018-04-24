@@ -31,7 +31,6 @@
 
 				<textarea ng-model="curMessage.message" ng-change="updateMessage()" id="messageInput"></textarea>
 				<input type="button" ng-click="newMessage()" value="New Message">
-				<input type="button" value="Save Changes">
 
 				<p><i>Guest:</i></p>
 				<select ng-model="curGuest" ng-change="updateMessage()" ng-options="(i.firstName + ' ' + i.lastName) for i in guests">

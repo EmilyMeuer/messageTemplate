@@ -1,0 +1,14 @@
+{
+    "guestReplace": [
+        ["firstName", [ "firstName"] ],
+        ["lastName", [ "lastName"] ],
+        ["roomNumber", [ "reservation", "roomNumber"] ],
+        ["startTimestamp", [ "reservation", "startTimestamp"] ],
+        ["endTimestamp", [ "reservation", "endTimestamp"] ]
+    ],
+    "companyReplace": [
+        ["company", [ "company" ] ],
+        ["city", [ "city" ] ],
+        ["timezone", [ "timezone" ] ]
+    ]
+}
