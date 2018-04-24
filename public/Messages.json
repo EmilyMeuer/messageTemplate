@@ -1,0 +1,26 @@
+[
+    {
+        "id" : "[template data]",
+        "message": "[This position has attributes that define template data. To edit the variables allowed in templates, change the \"guestReplace\" and \"companyReplace\" arrays in Messages.json.]",
+        "guestReplace": [
+            ["firstName", [ "firstName"] ],
+            ["lastName", [ "lastName"] ],
+            ["roomNumber", [ "reservation", "roomNumber"] ],
+            ["startTimestamp", [ "reservation", "startTimestamp"] ],
+            ["endTimestamp", [ "reservation", "endTimestamp"] ]
+        ],
+        "companyReplace": [
+            ["company", [ "company" ] ],
+            ["city", [ "city" ] ],
+            ["timezone", [ "timezone" ] ]
+        ]
+    },
+    {
+        "id" : 1,
+        "message": "Greeting, firstName, and welcome to company!  Room roomNumber is now ready for you.  Enjoy your stay, and let us know if you need anything."
+    },
+    {
+        "id" : 2,
+        "message": "firstName, thank you for staying at company!  We hope your enjoyed your visit to city."
+    }
+]

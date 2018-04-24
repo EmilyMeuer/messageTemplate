@@ -1,0 +1,20 @@
+.body {
+    font: 12pt "Times New Roman", serif
+}
+
+.floatLeft {
+    float: left;
+}
+
+.clearRight {
+    clear: right;
+}
+
+.clearLeft {
+    clear: left;
+}
+
+#messageInput {
+    width: 20rem;
+    height: 10rem;
+}

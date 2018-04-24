@@ -4,29 +4,53 @@
 	Emily Meuer
 	04/15/2018
 
-	Customizable message template provider, using AngularJS
+	Customizable message template provider, written using AngularJS.
 -->
 
 <html ng-app="app">
+
 	<head>
-		<meta charset="utf-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1"/>
-		<link rel="stylesheet" href="style.css"/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="style.css" />
 
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
-        <script src="app.js"></script>
-    </head>
+		<script src="app.js"></script>
+	</head>
 
-    <body>
-        <h1>Hi, {{ 1 + 18 }}!</h1>
+	<body>
+		<h1>Message Template</h1>
 
 		<div ng-controller="MessageController">
-			<p>replace {{ me }}</p>
+
+			<div>
+				<p><i>Message number:</i></p>
+				<select ng-model="curMessage" ng-change="updateMessage()" ng-options="i.id for i in messages" class="clearRight">
+					<option value="">Select a message:</option>
+				</select>
+
+				<textarea ng-model="curMessage.message" ng-change="updateMessage()" id="messageInput"></textarea>
+				<input type="button" ng-click="newMessage()" value="New Message">
+				<input type="button" value="Save Changes">
+
+				<p><i>Guest:</i></p>
+				<select ng-model="curGuest" ng-change="updateMessage()" ng-options="(i.firstName + ' ' + i.lastName) for i in guests">
+					<option value="">Select a guest:</option>
+				</select>
+
+				<p><i>Company:</i></p>
+				<select ng-model="curCompany" ng-change="updateMessage()" ng-options="i.company for i in companies">
+					<option value="">Select a company:</option>
+				</select>
+			</div>
+
+
+			<h4 class="clearLeft">Message:</h4>
 			<p id="message">
 				{{ message }}
-	  		</p>
+			</p>
 		</div>
 
-        <!-- Tables that will read from the template JSON and autofill themselves -->
-    </body>
+	</body>
+
 </html>

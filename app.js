@@ -5,196 +5,105 @@
     04/15/2018
 
     Customizable message template provider, using AngularJS
+
+    TODO
+    - perfect world:
+        - clean up "clear___" and textarea field on size change
+    - necessary:
+        - "Edit message" button / input field
+            - Find next id
+            - "New Message" should automatically update curMessage, too
+            - Disable "Save Changes" on (no difference between inputText and curMessage)
+            - But then make "Save Changes" take effect (that is - replace variables!)
+        - comment it up!
+    - done:
+        - roomNumber
+        - ^ Link $scope.curGuest and $scope.curCompany (and curMessage) to dropdown selects
+        - "Update message" button (or do this automatically)
+        - error messages show up on the page (not just console.error)
+
 */
 
 (function() {
     var app = angular.module("app", []);
 
-    console.log("Are we here at all?");
-
-// Host this and grab by http when I get on wi-fi: (or check w/jquery?)
-    var guests = [
-      {
-        "id": 1,
-        "firstName": "Candy",
-        "lastName": "Pace",
-        "reservation": {
-          "roomNumber": 529,
-          "startTimestamp": 1486654792,
-          "endTimestamp": 1486852373
-        }
-      },
-      {
-        "id": 2,
-        "firstName": "Morgan",
-        "lastName": "Porter",
-        "reservation": {
-          "roomNumber": 385,
-          "startTimestamp": 1486612719,
-          "endTimestamp": 1486694720
-        }
-      },
-      {
-        "id": 3,
-        "firstName": "Bridgett",
-        "lastName": "Richard",
-        "reservation": {
-          "roomNumber": 141,
-          "startTimestamp": 1486520344,
-          "endTimestamp": 1486769616
-        }
-      },
-      {
-        "id": 4,
-        "firstName": "Melisa",
-        "lastName": "Preston",
-        "reservation": {
-          "roomNumber": 417,
-          "startTimestamp": 1486614763,
-          "endTimestamp": 1486832543
-        }
-      },
-      {
-        "id": 5,
-        "firstName": "Latoya",
-        "lastName": "Herrera",
-        "reservation": {
-          "roomNumber": 194,
-          "startTimestamp": 1486605110,
-          "endTimestamp": 1486785126
-        }
-      },
-      {
-        "id": 6,
-        "firstName": "Hewitt",
-        "lastName": "Hopper",
-        "reservation": {
-          "roomNumber": 349,
-          "startTimestamp": 1486660637,
-          "endTimestamp": 1486788273
-        }
-      }
-  ];
-
-  var companies = [
-    {
-      "id": 1,
-      "company": "Hotel California",
-      "city": "Santa Barbara",
-      "timezone": "US/Pacific"
-    },
-    {
-      "id": 2,
-      "company": "The Grand Budapest Hotel",
-      "city": "Republic of Zubrowka",
-      "timezone": "US/Central"
-    },
-    {
-      "id": 3,
-      "company": "The Heartbreak Hotel",
-      "city": "Graceland",
-      "timezone": "US/Central"
-    },
-    {
-      "id": 4,
-      "company": "The Prancing Pony",
-      "city": "Bree",
-      "timezone": "US/Central"
-    },
-    {
-      "id": 5,
-      "company": "The Fawlty Towers",
-      "city": "Torquay",
-      "timezone": "US/Eastern"
-    }
-];
-
-    var messages = [
-      {
-        "message": " {{ greeting }}, {{ firstName }}, and welcome to {{ hotel }}! Room {{ roomNumber }} is now ready for you.  Enjoy your stay, and let us know if you need anything."
-    }
-    ]
-
-
-
-    // Controllers to fill the tables
-
-    // Select a template
-
-    // The template will require that particular variables be filled in correctly
-    // (e.g., firstName, lastName, hotel);
-    // How will I know which variables I need?  Or - I could fill all of them!
-    // $scope.firstName = guest.firstName; etc.
-
-    // Maybe I'll let them select this guest graphically:
     var guestId = 1;
+    var companyId = 1;
+    //    var curMessagePos = 0;
+    var guestReplace;
+    var companyReplace;
 
-    app.controller("MessageController", function($scope, $http) {
+    app.controller("MessageController", function($scope, $http, $q) {
 
-        console.log("In the MessageController");
-/*
-        $http.get("http://localhost:8013/Guests.json")
-        .then(function (response) {
-            // Success!
-            console.log(response);
-        }, function (response) {
-            // Error:
-            console.log("messageTemplate/app.js: caught an error trying to get information for guest " + guestId + "; response = " + response);
-        });
-        */
+        var guestPromise = $http.get("./public/Guests.json");
+        var companiesPromise = $http.get("./public/Companies.json");
+        var messagesPromise = $http.get("./public/Messages.json");
 
-        var curGuest;
+        $q.all([guestPromise, companiesPromise, messagesPromise])
+            .then((data) => {
+                $scope.guests = data[0].data;
+                $scope.companies = data[1].data;
+                $scope.messages = data[2].data;
 
-        for(var i = 0; i < guests.length; i++)
-        {
-            if(guests[i].id == guestId) {   curGuest    = guests[i];    }
+                guestReplace = $scope.messages[0].guestReplace;
+                companyReplace = $scope.messages[0].companyReplace;
 
-        } // for
-        if(curGuest == null)
-        {
-            console.log("Hmm, couldn't find guest with id " + guestId + ".");
-        }
+                $scope.updateMessage = () => {
+                    // Make sure that to only do this *after* message, guest and company have been selected:
+                    if ($scope.curMessage != undefined &&
+                        $scope.curGuest != undefined &&
+                        $scope.curCompany != undefined) {
 
-        console.log("curGuest.firstName = " + curGuest.firstName);
+                        // Making copies ensures that shifting the elements in
+                        // getAttribute() will not affect future events:
+                        var guestReplaceCopy = [];
+                        angular.copy($scope.curMessage.guestReplace, guestReplaceCopy);
+                        var companyReplaceCopy = [];
+                        angular.copy($scope.curMessage.companyReplace, companyReplaceCopy);
+                        var curMessageText = $scope.curMessage.message;
 
-        $scope.me   = "Emily";
+                        var replaceWithThis;
+                        for (var i = 0; i < guestReplaceCopy.length; i++) {
+                            replaceWithThis = getAttribute($scope.curGuest, guestReplaceCopy[i][1]);
 
-        console.log("$scope.firstName = " + $scope.firstName);
+                            if (replaceWithThis === undefined) {
+                                window.alert("Warning: attribute \'" + guestReplaceCopy[i][1] + "\' is undefined for guest \'" + $scope.curGuest.firstName + " " + $scope.curGuest.lastName + "\'; consider editing this message before sending it.");
+                            }
 
-//        var messages    = $http.jsonp("https://emilymeuer.github.io/messageTemplate/Messages.json").
-        var messages    = $http.get("./Messages.json").
-            then( (response) => {
-                console.log("Success getting Messages");
-                console.log(response.data[0]);
-                var messageElement = document.querySelector("#message").innerHTML  = "<p ng-bind=\"greeting\" ng-controller=\"InnerController\">" + response.data[0].message + "</p>";
-            //    messageElement.greeting = "Hi";
-            /*    $scope.controller = ("trueInnerController", ($scope) => {
-                    $scope.greeting = "Hello";
-                });
-                */
-                $scope.greeting = "Hello";
-                console.log($scope);
-//                $scope.apply();
-//                $scope.message  = innerController;
-            }, (error) => {
-                console.log("Error getting Messages");
-                console.log(error);
+                            curMessageText = curMessageText.replace(guestReplaceCopy[i][0], replaceWithThis);
+                        }
+
+                        for (var i = 0; i < companyReplaceCopy.length; i++) {
+                            if ($scope.curCompany[companyReplaceCopy[i][1]] === undefined) {
+                                window.alert("Warning: attribute \'" + companyReplaceCopy[i][1] + "\' is undefined for company \'" + $scope.curCompany.company + "\'; consider editing this message before sending it.");
+                            }
+
+                            curMessageText = curMessageText.replace(companyReplaceCopy[i][0], $scope.curCompany[companyReplaceCopy[i][1]]);
+                        }
+
+                        $scope.message = curMessageText;
+                    }
+                } // updateMessage
+
+                $scope.newMessage = () => {
+                    $scope.curMessage = $scope.messages.push({
+                        "id": 20,
+                        "message": ""
+                    });
+                } // newMessage
             });
-//        var message    = messages[0].message;
-//        console.log("message.firstName = " + message.firstName);
-
-
-        // New plan:
-        // There's some sort of replace;
-        // I'm going to include the variables that need to be replaced
-        // in the JSON (either as keys or as an array - prob the latter).
-
-        // I'll use the replace from cal
-
     }); // MessageController
 
+    function getAttribute(element, attributes) {
+        if (attributes.length === 0) {
+            throw "app.getAttribute: array parameter has length 0; must contain at least 1 element.";
+        }
+        if (attributes.length === 1) {
+            return element[attributes[0]];
+        }
 
-        var innerController = app.controller("InnerController", function($scope) {
-            $scope.greeting = "Hello";
-        });
+        element = element[attributes.shift()];
+        return getAttribute(element, attributes);
+    } // getAttribute
+
 })();
