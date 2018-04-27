@@ -2,7 +2,7 @@
 
 A customizable message template provider created in AngularJS.
 
-The program is live at (https://emilymeuer.github.io/messageTemplate/).
+The program is live at https://emilymeuer.github.io/messageTemplate/.
 
 ### To run:
  - Select Message, Guest and Company from the drop-down menus.
