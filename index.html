@@ -25,26 +25,29 @@
 
 			<div>
 				<p><i>Message number:</i></p>
-				<select ng-model="curMessage" ng-change="updateMessage()" ng-options="i.id for i in messages" class="clearRight">
+				<select ng-model="curMessage" ng-change="updateMessage()" ng-options="i.id for i in messages">
 					<option value="">Select a message:</option>
 				</select>
 
-				<textarea ng-model="curMessage.message" ng-change="updateMessage()" id="messageInput"></textarea>
-				<input type="button" ng-click="newMessage()" value="New Message">
+				<div class="clearLeft clearRight">
+					<textarea ng-model="curMessage.message" ng-change="updateMessage()" id="messageInput"></textarea>
+					<input type="button" ng-click="newMessage()" value="New Message">
+				</div>
 
 				<p><i>Guest:</i></p>
-				<select ng-model="curGuest" ng-change="updateMessage()" ng-options="(i.firstName + ' ' + i.lastName) for i in guests">
+				<select ng-model="curGuest" ng-change="updateMessage()" ng-options="(i.firstName + ' ' + i.lastName) for i in guests" class="clearLeft">
 					<option value="">Select a guest:</option>
 				</select>
 
 				<p><i>Company:</i></p>
-				<select ng-model="curCompany" ng-change="updateMessage()" ng-options="i.company for i in companies">
+				<select ng-model="curCompany" ng-change="updateMessage()" ng-options="i.company for i in companies" class="floatLeft">
 					<option value="">Select a company:</option>
 				</select>
+
 			</div>
 
-
-			<h4 class="clearLeft">Message:</h4>
+			</br>
+			<h4>Message:</h4>
 			<p id="message">
 				{{ message }}
 			</p>
