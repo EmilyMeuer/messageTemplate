@@ -86,7 +86,7 @@
 
 						// Replace the greeting:
 						var time = getAttribute($scope.curGuest, ["reservation", "startTimestamp"]);
-						var hour = $filter("date")(time, "H", "US / Central");
+						var hour = $filter("date")(time, "H", getAttribute($scope.curCompany, ["timezone"]));
 						// Morning: 0-(12); Afternoon: 12-(18); Evening: 18-(24)
 						var curGreeting = greeting[Math.floor(hour / 6)];
 
@@ -104,20 +104,31 @@
 						"id": ($scope.messages.length + 1),
 						"message": ""
 					});
-					// ... and set it as the current message so we can start editing it right away!
+					// ... and set it as the current message so we can start editing it right away:
 					$scope.curMessage = $scope.messages[$scope.messages.length - 1];
 				} // newMessage
 			});
 	}); // MessageController
 
+	/*
+	    Returns the value of the given attribute for a given element.
+	    Attributes are passes as a string array;
+	    each level of a nested attribute is an element in the array - for example,
+	     reservation.roomNumber would be [ "reservation", "roomNumber" ],
+	     student.currentSemester.numCourses would be [ "student", "currentSemester", "numCourses" ].
+	*/
 	function getAttribute(element, attributes) {
 		if (attributes.length === 0) {
 			throw "app.getAttribute: array parameter has length 0; must contain at least 1 element.";
 		}
+		// End condition:
 		if (attributes.length === 1) {
 			return element[attributes[0]];
 		}
 
+		// Pull out the first attribute,
+		// use it to get into the next level of the element,
+		// and send that smaller element/list of attributes through again:
 		element = element[attributes.shift()];
 		return getAttribute(element, attributes);
 	} // getAttribute
